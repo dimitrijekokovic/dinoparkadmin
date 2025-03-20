@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface Order {
   id: number;
@@ -25,30 +25,33 @@ interface Order {
   }[];
 }
 
-export default function OrderDetailsPage() {
-  const { id } = useParams(); // Dobijanje ID-a iz URL-a
+export default function OrderDetailsPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  // Fetch narudžbine po ID-ju
   useEffect(() => {
-    if (!id) return; // Ako nema ID-a, prekini funkciju
-
     const fetchOrder = async () => {
       try {
         const res = await fetch(
-          `https://dinoparkwebshop-backend-1081514700612.us-central1.run.app/api/Order/${id}`
+          `https://dinoparkwebshop-backend-1081514700612.us-central1.run.app/api/Order/${params.id}`
         );
         if (!res.ok) throw new Error("Narudžbina nije pronađena");
-        setOrder(await res.json());
+        const data = await res.json();
+        setOrder(data);
       } catch (error) {
         console.error("Greška pri učitavanju narudžbine:", error);
       }
     };
-
     fetchOrder();
-  }, [id]);
+  }, [params.id]);
 
+  // Funkcija za slanje narudžbine
   const handleShipOrder = async () => {
     if (!order) return;
     setLoading(true);
@@ -67,6 +70,7 @@ export default function OrderDetailsPage() {
     setLoading(false);
   };
 
+  // Funkcija za brisanje narudžbine
   const handleDeleteOrder = async () => {
     if (!order) return;
     setLoading(true);

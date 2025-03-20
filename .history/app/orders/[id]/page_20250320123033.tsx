@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface Order {
   id: number;
@@ -25,30 +25,29 @@ interface Order {
   }[];
 }
 
-export default function OrderDetailsPage() {
-  const { id } = useParams(); // Dobijanje ID-a iz URL-a
+export default function OrderDetailsPage({ params }: { params: { id: string } }) {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  // Fetch narudžbine po ID-ju
   useEffect(() => {
-    if (!id) return; // Ako nema ID-a, prekini funkciju
-
     const fetchOrder = async () => {
       try {
         const res = await fetch(
-          `https://dinoparkwebshop-backend-1081514700612.us-central1.run.app/api/Order/${id}`
+          `https://dinoparkwebshop-backend-1081514700612.us-central1.run.app/api/Order/${params.id}`
         );
         if (!res.ok) throw new Error("Narudžbina nije pronađena");
-        setOrder(await res.json());
+        const data = await res.json();
+        setOrder(data);
       } catch (error) {
         console.error("Greška pri učitavanju narudžbine:", error);
       }
     };
-
     fetchOrder();
-  }, [id]);
+  }, [params.id]);
 
+  // Funkcija za slanje narudžbine
   const handleShipOrder = async () => {
     if (!order) return;
     setLoading(true);
@@ -58,15 +57,14 @@ export default function OrderDetailsPage() {
         { method: "PUT", headers: { Accept: "*/*" } }
       );
       if (!res.ok) throw new Error("Greška pri slanju narudžbine");
-      setOrder((prevOrder) =>
-        prevOrder ? { ...prevOrder, status: "Shipped" } : null
-      );
+      setOrder((prevOrder) => prevOrder ? { ...prevOrder, status: "Shipped" } : null);
     } catch (error) {
       console.error("Greška pri slanju narudžbine:", error);
     }
     setLoading(false);
   };
 
+  // Funkcija za brisanje narudžbine
   const handleDeleteOrder = async () => {
     if (!order) return;
     setLoading(true);
@@ -98,26 +96,12 @@ export default function OrderDetailsPage() {
       </h1>
 
       <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
-        <p className="text-lg">
-          <strong>Ime:</strong> {order.name}
-        </p>
-        <p className="text-lg">
-          <strong>Adresa:</strong> {order.address}
-        </p>
-        <p className="text-lg">
-          <strong>Email:</strong> {order.email}
-        </p>
-        <p className="text-lg">
-          <strong>Telefon:</strong> {order.phone}
-        </p>
-        <p className="text-lg">
-          <strong>Ukupna cena:</strong> {order.totalPrice} RSD
-        </p>
-        <p
-          className={`text-lg font-semibold ${
-            order.status === "Waiting" ? "text-orange-500" : "text-green-600"
-          }`}
-        >
+        <p className="text-lg"><strong>Ime:</strong> {order.name}</p>
+        <p className="text-lg"><strong>Adresa:</strong> {order.address}</p>
+        <p className="text-lg"><strong>Email:</strong> {order.email}</p>
+        <p className="text-lg"><strong>Telefon:</strong> {order.phone}</p>
+        <p className="text-lg"><strong>Ukupna cena:</strong> {order.totalPrice} RSD</p>
+        <p className={`text-lg font-semibold ${order.status === "Waiting" ? "text-orange-500" : "text-green-600"}`}>
           <strong>Status:</strong> {order.status}
         </p>
       </div>
@@ -126,25 +110,16 @@ export default function OrderDetailsPage() {
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Proizvodi</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {order.items.map((item) => (
-          <div
-            key={item.productId}
-            className="bg-white shadow-lg rounded-lg p-4"
-          >
+          <div key={item.productId} className="bg-white shadow-lg rounded-lg p-4">
             <img
               src={item.productDetails.imageUrl}
               alt={item.productDetails.name}
               className="w-full h-48 object-cover rounded-md"
             />
-            <h3 className="text-xl font-semibold mt-2">
-              {item.productDetails.name}
-            </h3>
+            <h3 className="text-xl font-semibold mt-2">{item.productDetails.name}</h3>
             <p className="text-gray-600">{item.productDetails.description}</p>
-            <p className="text-gray-800 font-semibold">
-              Cena: {item.productDetails.price} RSD
-            </p>
-            <p className="text-gray-800 font-semibold">
-              Količina: {item.quantity}
-            </p>
+            <p className="text-gray-800 font-semibold">Cena: {item.productDetails.price} RSD</p>
+            <p className="text-gray-800 font-semibold">Količina: {item.quantity}</p>
           </div>
         ))}
       </div>
