@@ -1,6 +1,6 @@
 "use client"
 
-import { faBoxes, faBuilding, faCashRegister, faHome, faImage, faInbox, faSignOut, faUser } from "@fortawesome/free-solid-svg-icons"
+import { faBoxes, faBuilding, faCashRegister, faClock, faHome, faImage, faInbox, faSignOut, faUser } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
@@ -28,6 +28,14 @@ export default function AdminSidebar() {
             children: (
                 <>
                    <FontAwesomeIcon icon={faImage} /> Gallery
+                </>
+            ),
+        },
+        {
+            href: "/working-hours",
+            children: (
+                <>
+                   <FontAwesomeIcon icon={faClock} /> Working Hours
                 </>
             ),
         },
