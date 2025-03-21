@@ -1,6 +1,6 @@
 "use client"
 
-import { faBoxes, faBuilding, faCashRegister, faHome, faInbox, faSignOut, faUser } from "@fortawesome/free-solid-svg-icons"
+import { faBoxes, faBuilding, faCashRegister, faHome, faImage, faInbox, faSignOut, faUser } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
@@ -20,6 +20,14 @@ export default function AdminSidebar() {
             children: (
                 <>
                     <FontAwesomeIcon icon={faInbox} /> Orders
+                </>
+            ),
+        },
+        {
+            href: "/gallery",
+            children: (
+                <>
+                   <FontAwesomeIcon icon={faImage} /> Gallery
                 </>
             ),
         },
