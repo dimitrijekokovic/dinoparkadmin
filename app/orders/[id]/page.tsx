@@ -7,6 +7,7 @@ interface Order {
   id: number;
   name: string;
   address: string;
+  postalCode: string;
   email: string;
   phone: string;
   totalPrice: number;
@@ -103,6 +104,9 @@ export default function OrderDetailsPage() {
         </p>
         <p className="text-lg">
           <strong>Adresa:</strong> {order.address}
+        </p>
+        <p className="text-lg">
+          <strong>Postanski Broj:</strong> {order.postalCode}
         </p>
         <p className="text-lg">
           <strong>Email:</strong> {order.email}
