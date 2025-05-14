@@ -1,16 +1,27 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Product } from "@/types/product";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 
-export default async function Page() {
-    let products: Product[] = [];
-    try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/Product`);
-        products = await res.json();
-    } catch (error) {
-        console.error(error);
-    }
+export default function Page() {
+    const [products, setProducts] = useState<Product[]>([]);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/Product`);
+                const data = await res.json();
+                setProducts(data);
+            } catch (error) {
+                console.error("Greška prilikom preuzimanja proizvoda:", error);
+            }
+        };
+
+        fetchProducts();
+    }, []); // prazna lista zavisnosti znači da se poziva samo na prvom mountu
 
     return (
         <div className="p-4">
@@ -22,7 +33,6 @@ export default async function Page() {
                 </Link>
             </div>
 
-            {/* Grid layout za kartice */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {products.map((product) => (
                     <Link 
